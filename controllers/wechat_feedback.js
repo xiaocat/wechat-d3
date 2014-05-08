@@ -9,16 +9,16 @@ exports.text = function(message, req, res, next){
   var lag = 'Xiao-1116';
 
   get_tag(lag, function(resp){
-    console.log(util.inspect(resp, {colors: true}));
+    // console.log(util.inspect(resp, {colors: true}));
 
-    var title = {
+    var result = [];
+    result.push({
       title: resp.battleTag,
       description: '巅峰等级：' + resp.paragonLevel + '，专家巅峰等级：' + resp.paragonLevelHardcore,
       picurl: domain + '/images/d3/title.jpg',
       url: ''
-    }
-    var result = [];
-    result.push(title);
+    });
+
     resp.heroes.forEach(function(i){
       result.push({
         title: i.name,
@@ -27,6 +27,7 @@ exports.text = function(message, req, res, next){
         url: domain + '/d3/hero?lag=' + resp.battleTag + '&id=' + i.id 
       });
     });
+    
     res.reply(result);
 
   });
@@ -38,27 +39,12 @@ exports.text = function(message, req, res, next){
         callback(null);
         return;
       }
-      // console.log(util.inspect(resp, {colors: true}));
-      // resp.body.heroesData = {};
-      // var num = 0;
 
       callback(resp.body);
 
-      // resp.body.heroes.forEach(function(i){
-      //   get_hero(i.id, lag, function(id, data){
-      //     resp.body.heroesData[id] = data;
-      //     if(++num == resp.body.heroes.length) callback(resp.body);
-      //   });
-      // });
     });
   }
 
-  function get_hero(id, lag, callback){
-    needle.get('http://tw.battle.net/api/d3/profile/' + lag + '/hero/' + id, {'json': true}, function(err, resp){
-      if(err) throw err;
-      callback(id, resp.body);
-    });
-  }
 };
 
 exports.location = function(message, req, res, next){
