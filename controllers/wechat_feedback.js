@@ -1,7 +1,7 @@
 var util = require('util');
 var needle = require('needle');
 
-var domain = 'http://localhost:3000'
+var domain = 'http://d3.xiaoweb.net'
 
 exports.text = function(message, req, res, next){
   console.log(message);
