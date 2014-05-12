@@ -141,11 +141,11 @@
     height: 14%;
   }
   .hero-container {
-    width: 320px;
-    margin: 0 auto;
+    width: 310px;
+    margin: 20px auto;
   }
   .panel-body {
-    padding: 10px;
+    padding: 5px;
   }
   .table {
     text-align: center;
@@ -157,8 +157,13 @@
   .p-skill > img {
     margin:0 3px;
   }
+
+  .popover{
+    min-width: 200px;
+  }
 </style>
 <% var profession = { 'wizard': '魔法师', 'crusader': '圣教军', 'witch-doctor': '巫医', 'demon-hunter': '猎魔人', 'barbarian': '野蛮人', 'monk': '武僧' } %>
+<% var util_name = {'life': '生命值', 'damage': '面板伤害', 'attackSpeed': '攻击速度', 'armor': '护甲', 'strength': '力量', 'dexterity': '敏捷', 'vitality' : '体能', 'intelligence': '智力', 'physicalResist': '物理抗性', 'fireResist': '火焰抗性', 'coldResist': '冰寒抗性', 'lightningResist': '电击抗性', 'poisonResist': '毒素抗性', 'arcaneResist': '秘法抗性', 'thorns': '反弹伤害', 'lifeSteal': '生命偷取', 'lifePerKill': '击杀回复', 'lifeOnHit': '击中回复', 'goldFind': '金币获取率', 'magicFind': '魔法装备获取率'} %>
 <div class="hero-container">
   <div class="panel panel-default">
     <div class="panel-heading">角色名称：</lable><span><%= j.name %><%= j.hardcore ? '(专家模式)': '' %></span></div>
@@ -170,7 +175,7 @@
         <% for(var m in j.items){ %>
           <% if(j.items[m].id){ %>
             <div class="<%= j.items[m].displayColor %>  equip <%= m %>" >
-              <img class="img_hover equip_img img-64" item-data="<%= j.items[m].tooltipParams %>" data-title="<h4 style='color:<%= j.items[m].displayColor %>;text-shadow:0 1px 1px rgba(0,0,0,0.5);'><%= j.items[m].name %></h4>" data-html="true" data-content="查看详情请点击图片加载！" data-placement="bottom" data-trigger="manual" src="<%= 'http://us.media.blizzard.com/d3/icons/items/large/' + j.items[m].icon + '.png' %>" />
+              <img class="img_hover equip_img img-64" item-data="<%= j.items[m].tooltipParams %>" data-title="<h4 style='color:<%= j.items[m].displayColor %>;text-shadow:0 1px 1px rgba(0,0,0,0.5);'><%= j.items[m].name %></h4>" data-html="true" data-content="查看详情请点击图片加载！" data-placement="bottom" data-trigger="click" src="<%= 'http://us.media.blizzard.com/d3/icons/items/large/' + j.items[m].icon + '.png' %>" />
             </div>
           <% } %>
         <% } %>
@@ -239,27 +244,40 @@
       <div class="clear"></div>
     </div>
   </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">详细属性</div>
+    <div class="panel-body">
+      <% for(var n in j.stats){ %>
+        <% if(util_name[n]){ %>
+          <p>
+            <label><%= util_name[n] %></label>
+            <span><%= j.stats[n] %></span>
+          </p>
+        <% } %>
+      <% } %>
+    </div>
+  </div>
 </div>
 
 <script type="text/javascript">
   $('.img_hover').popover();
 
-  // $('.img_hover').on('shown.bs.popover', function () {
-  //   // do something…
-  //   var $this = $(this);
-  //   $this.addClass('click_show');
-  //   $('.img_hover:not(.click_show)').popover('hide');
-  //   $this.removeClass('click_show');
-  // });
+  $('.img_hover').on('show.bs.popover', function () {
+    // do something…
+    var $this = $(this);
+      $('.showing').popover('hide');
+      $('.showing').removeClass('showing').next('.popover').remove();
+      $this.addClass('showing');
+  });
 
   $('.equip_img').click(function(){
     var $dom = $(this);
 
     if($dom.hasClass('loaded') || $dom.hasClass('loading')) {
-      $dom.popover('show');
+      // $dom.popover('show');
       return;
     }
-    $dom.attr('data-content', '加载中...').addClass('loading');
+    $dom.attr('data-content', '<p>装备详情信息加载中...<br></p>').addClass('loading');
     $dom.popover('show');
 
     //获取装备详细信息
@@ -268,13 +286,14 @@
       type: 'GET',
       dataType: 'json',
       success: function(res){
-        console.log(res);
         var html = '装备类型：<span style="color: ' + res.displayColor + '; text-shadow: 0 1px 1px #ccc;">' + res.typeName + '</span><br>' +
                    (res.dps ? 'DPS：<strong style="color: #ff472f; text-shadow: 0 1px 1px rgba(1,1,1, 0.3);">' + Math.round(res.dps.max *10)/10 + '</strong><br>': '') +
                    (res.minDamage ? '攻击区间：<strong style="text-shadow: 0 1px 1px rgba(1,1,1, 0.3);">' + Math.round(res.minDamage.max *10)/10 + '-' + Math.round(res.maxDamage.max *10)/10 + '</strong><br>': '') +
                    (res.attacksPerSecond ? '每秒攻击次数：<strong style="text-shadow: 0 1px 1px rgba(1,1,1, 0.3);">' + Math.round(res.attacksPerSecond.max *100)/100 + '</strong><br>': '') +
                    (res.armor ? '护甲：<strong style="color: #fc2609;">' + res.armor.max + '</strong><br>': '') +
-                   (res.attributes.primary.length > 0 ? '属性：' + attr(res.attributes) + '<br>' : '') + 
+                   (res.attributes.primary.length > 0 ? '主要属性：' + attr(res.attributes, 'primary') + '<br>' : '') + 
+                   (res.attributes.secondary.length > 0 ? '次要属性：' + attr(res.attributes, 'secondary') + '<br>' : '') +
+                   (res.attributes.passive.length > 0 ? '特效属性：' + attr(res.attributes, 'passive') + '<br>' : '') +
                    '装备等级：' + res.itemLevel + '<br>' +
                    '解锁等级：' + res.requiredLevel + '<br>';
 
@@ -289,15 +308,13 @@
   });
   
   //装备属性渲染
-  function attr(data){
-    if(data.primary.length == 0 && data.secondary.length == 0 && data.passive.length == 0) return '';
+  function attr(data, key){
+    if(data[key].length == 0) return '';
 
     var result = '';
-    for(var z in data){
-      data[z].forEach(function(i){
-        result +=  i.text + '<br>';
-      });
-    }
+    data[key].forEach(function(i){
+      result +=  i.text + '<br>';
+    });
     
     return '<div style="display: inline-block; vertical-align: text-top; width: 200px; color: #5959e2;">' + result + '</div>';
   }
