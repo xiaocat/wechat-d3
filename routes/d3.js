@@ -6,7 +6,7 @@ var needle = require('needle');
 /* GET users listing. */
 router.get('/hero', function(req, res, next) {
 
-  var lag = req.query.lag.split('#').join('-') || 'Xiao-1116';
+  var lag = req.query.lag.split('_').join('-') || 'Xiao-1116';
   // var lag = 'Xiao-1116';
   var id = req.query.id || '36459693';
 
