@@ -1,0 +1,306 @@
+<%- include header %>
+<style type="text/css">
+  .yellow {
+    background: yellow;
+  }
+  .green {
+    /*background: green;*/
+    background: rgba(0, 128, 0, 0.7);
+  }
+  .orange {
+    /*background: orange;*/
+    background: rgba(255, 165, 0 ,0.6);
+  }
+  .blue {
+    background: rgba(0,0,255, 1);
+  }
+  .white {
+    background: white;
+  }
+
+  .equip{
+    border: 1px solid #ccc;
+    display: inline-block;
+    position: absolute;
+    text-align: center;
+  }
+
+  .equip > img {
+    height: 100%;
+  }
+
+  .act-wrapper{
+    width: 20%;
+    float: left;
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+    text-align: center;
+  }
+  .clear {
+    clear: both;
+  }
+  .margin-b-10{
+    margin-bottom: 10px;
+  }
+  .img{
+    width: 64px;
+    height: 64px;
+  }
+
+  .personal-bg {
+    background: url(/images/d3/bg.jpg) no-repeat scroll 0 0 transparent;
+    /*width: 447px;*/
+    /*height: 640px;*/
+    width: 300px;
+    height: 430px;
+    background-size: 300px 430px;
+    position: relative;
+  }
+
+  .legs {
+    left: 40%;
+    top: 57%;
+    height: 19%;
+    width: 20%;
+  }
+
+  .rightFinger {
+    left: 80%;
+    top: 56%;
+    height: 8%;
+  }
+
+  .waist {
+    left: 37%;
+    top: 48%;
+    height: 6%;
+    width: 26%;
+  }
+
+  .neck {
+    left: 68%;
+    top: 14%;
+    height: 11%;
+  }
+  .leftFinger {
+    top: 56%;
+    left: 8%;
+    height: 8%;
+  }
+
+  .offHand {
+    left: 76%;
+    top: 68%;
+    height: 29%;
+  }
+  .mainHand {
+    left: 3%;
+    top: 68%;
+    height: 29%;
+  }
+
+  .bracers {
+    left: 76%;
+    top: 32%;
+    width: 20%;
+    height: 19%;
+  }
+
+  .torso {
+    left: 37%;
+    top: 20%;
+    height: 25%;
+    width: 26%;
+  }
+
+  .shoulders {
+    left: 12%;
+    top: 9%;
+    height: 19%;
+    width: 20%;
+  }
+
+  .hands {
+    left: 4%;
+    top: 32%;
+    width: 19%;
+    height: 19%;
+  }
+
+  .feet {
+    top: 78%;
+    left: 40%;
+    width: 20%;
+    height: 19%;
+  }
+  .head {
+    left: 40%;
+    top: 4%;
+    width: 20%;
+    height: 14%;
+  }
+  .hero-container {
+    width: 320px;
+    margin: 0 auto;
+  }
+  .panel-body {
+    padding: 10px;
+  }
+  .table {
+    text-align: center;
+  }
+
+  .p-skill {
+    text-align: center;
+  }
+  .p-skill > img {
+    margin:0 3px;
+  }
+</style>
+<% var profession = { 'wizard': '魔法师', 'crusader': '圣教军', 'witch-doctor': '巫医', 'demon-hunter': '猎魔人', 'barbarian': '野蛮人', 'monk': '武僧' } %>
+<div class="hero-container">
+  <div class="panel panel-default">
+    <div class="panel-heading">角色名称：</lable><span><%= j.name %><%= j.hardcore ? '(专家模式)': '' %></span></div>
+    <div class="panel-body">
+      <p><lable>职业：</lable><%= profession[j.class] %><span>(<%= j.gender == 0 ? '男' : '女' %>)</span></p>
+      <p><lable>等级：</lable><span><%= j.level %></span></p>
+      <p><lable>精英击杀：</lable><span><%= j.kills.elites %></span></p>
+      <div class="personal-bg">
+        <% for(var m in j.items){ %>
+          <% if(j.items[m].id){ %>
+            <div class="<%= j.items[m].displayColor %>  equip <%= m %>" >
+              <img class="img_hover equip_img img-64" item-data="<%= j.items[m].tooltipParams %>" data-title="<h4 style='color:<%= j.items[m].displayColor %>;text-shadow:0 1px 1px rgba(0,0,0,0.5);'><%= j.items[m].name %></h4>" data-html="true" data-content="查看详情请点击图片加载！" data-placement="bottom" data-trigger="manual" src="<%= 'http://us.media.blizzard.com/d3/icons/items/large/' + j.items[m].icon + '.png' %>" />
+            </div>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">技能</div>
+    <div class="panel-body">
+      <table class="table table-bordered">
+        <tr>
+          <td>鼠标左键</td>
+          <td>鼠标右键</td>
+          <td>数字键1</td>
+        </tr>
+        <tr>
+          <% j.skills.active.forEach(function(k, l){ %>
+            <% if (k.skill && l < 3){ %>
+              <td>
+                <img class="img_hover img-64" data-toggle="popover" data-title="<h4 style='color:blue;'><%= k.skill.name %></h4>" data-content="解锁等级：<%= k.skill.level %><br>技能效果：<em style='color: green;'><%= k.skill.description %></em><br><br><strong><%= k.rune ? ('符文：' + k.rune.name + '<br>效果：' + k.rune.description ) : ''%></strong>" data-html="true" src="<%= 'http://us.media.blizzard.com/d3/icons/skills/64/' + k.skill.icon + '.png' %>"  data-placement="bottom" data-trigger="click"/>
+              </td>
+            <% } %>
+          <% }) %>
+        </tr>
+      </table>
+      <table class="table table-bordered">
+        <tr>
+          <td>数字键2</td>
+          <td>数字键3</td>
+          <td>数字键4</td>
+        </tr>
+        <tr>
+          <% j.skills.active.forEach(function(k, l){ %>
+            <% if (k.skill && l > 2){ %>
+              <td>
+                <img class="img_hover img-64" data-toggle="popover" data-title="<h4 style='color:blue;'><%= k.skill.name %></h4>" data-content="解锁等级：<%= k.skill.level %><br>技能效果：<em style='color: green;'><%= k.skill.description %></em><br><br><strong><%= k.rune ? ('符文：' + k.rune.name + '<br>效果：' + k.rune.description ) : ''%></strong>" data-html="true" src="<%= 'http://us.media.blizzard.com/d3/icons/skills/64/' + k.skill.icon + '.png' %>"  data-placement="bottom" data-trigger="click"/>
+              </td>
+            <% } %>
+          <% }) %>
+        </tr>
+      </table>
+      <div class="p-skill">
+        <% j.skills.passive.forEach(function(k, l){ %>
+          <% if (k.skill){ %>
+              <img class="img_hover img-64" data-toggle="popover" data-title="<h4 style='color:blue;'><%= k.skill.name %></h4>" data-content="解锁等级：<%= k.skill.level %><br>技能效果：<em style='color: green;'><%= k.skill.description %></em><br><br><%= k.skill.flavor %>" data-html="true" src="<%= 'http://us.media.blizzard.com/d3/icons/skills/64/' + k.skill.icon + '.png' %>"  data-placement="bottom" data-trigger="click"/>
+          <% } %>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">游戏进度</div>
+    <div class="panel-body">
+      <% for(var o in j.progression){ %>
+        <div class="act-wrapper panel <%= j.progression[o].completed ? 'panel-success': 'panel-danger' %>">
+          <div class="panel-heading" data-toggle="collapse" data-target=".<%= o %>">
+            <%={'act1': '第一章', 'act2': '第二章', 'act3': '第三章', 'act4': '第四章', 'act5': '第五章'}[o] %>
+          </div>
+          <ul class="list-group <%= o %> collapse ">
+            <% j.progression[o].completedQuests.forEach(function(p){ %>
+              <li class="list-group-item"><%= p.name %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+      <div class="clear"></div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('.img_hover').popover();
+
+  // $('.img_hover').on('shown.bs.popover', function () {
+  //   // do something…
+  //   var $this = $(this);
+  //   $this.addClass('click_show');
+  //   $('.img_hover:not(.click_show)').popover('hide');
+  //   $this.removeClass('click_show');
+  // });
+
+  $('.equip_img').click(function(){
+    var $dom = $(this);
+
+    if($dom.hasClass('loaded') || $dom.hasClass('loading')) {
+      $dom.popover('show');
+      return;
+    }
+    $dom.attr('data-content', '加载中...').addClass('loading');
+    $dom.popover('show');
+
+    //获取装备详细信息
+    $.ajax({
+      url:  '/d3/item?data='+ $dom.attr('item-data'),
+      type: 'GET',
+      dataType: 'json',
+      success: function(res){
+        console.log(res);
+        var html = '装备类型：<span style="color: ' + res.displayColor + '; text-shadow: 0 1px 1px #ccc;">' + res.typeName + '</span><br>' +
+                   (res.dps ? 'DPS：<strong style="color: #ff472f; text-shadow: 0 1px 1px rgba(1,1,1, 0.3);">' + Math.round(res.dps.max *10)/10 + '</strong><br>': '') +
+                   (res.minDamage ? '攻击区间：<strong style="text-shadow: 0 1px 1px rgba(1,1,1, 0.3);">' + Math.round(res.minDamage.max *10)/10 + '-' + Math.round(res.maxDamage.max *10)/10 + '</strong><br>': '') +
+                   (res.attacksPerSecond ? '每秒攻击次数：<strong style="text-shadow: 0 1px 1px rgba(1,1,1, 0.3);">' + Math.round(res.attacksPerSecond.max *100)/100 + '</strong><br>': '') +
+                   (res.armor ? '护甲：<strong style="color: #fc2609;">' + res.armor.max + '</strong><br>': '') +
+                   (res.attributes.primary.length > 0 ? '属性：' + attr(res.attributes) + '<br>' : '') + 
+                   '装备等级：' + res.itemLevel + '<br>' +
+                   '解锁等级：' + res.requiredLevel + '<br>';
+
+        $dom.attr('data-content', html).addClass('loaded').removeClass('loading');
+        $dom.popover('show');
+      },
+      error: function(){
+        $dom.attr('data-content', '加载失败，请点击重新加载～').removeClass('loading');
+        $dom.popover('show');
+      }
+    })
+  });
+  
+  //装备属性渲染
+  function attr(data){
+    if(data.primary.length == 0 && data.secondary.length == 0 && data.passive.length == 0) return '';
+
+    var result = '';
+    for(var z in data){
+      data[z].forEach(function(i){
+        result +=  i.text + '<br>';
+      });
+    }
+    
+    return '<div style="display: inline-block; vertical-align: text-top; width: 200px; color: #5959e2;">' + result + '</div>';
+  }
+
+</script>
+<%- include footer %>
