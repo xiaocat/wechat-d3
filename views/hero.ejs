@@ -165,7 +165,7 @@
     <div class="panel-body">
       <p><lable>职业：</lable><%= profession[j.class] %><span>(<%= j.gender == 0 ? '男' : '女' %>)</span></p>
       <p><lable>等级：</lable><span><%= j.level %></span></p>
-      <p><lable>精英击杀：</lable><span><%= j.kills.elites %></span></p>
+      <!-- <p><lable>精英击杀：</lable><span><%= j.kills.elites %></span></p> -->
       <div class="personal-bg">
         <% for(var m in j.items){ %>
           <% if(j.items[m].id){ %>
