@@ -4,9 +4,10 @@ var needle = require('needle');
 var domain = 'http://d3.xiaoweb.net'
 
 exports.text = function(message, req, res, next){
-  console.log(message);
+  var ctx = message.Content;
+  var lag = ctx.replace('#', '-');
 
-  var lag = 'Xiao-1116';
+  // var lag = 'Xiao-1116';
   var profession = {
     'wizard': '魔法师',
     'crusader': '圣教军',
@@ -17,26 +18,31 @@ exports.text = function(message, req, res, next){
   }
 
   get_tag(lag, function(resp){
-    // console.log(util.inspect(resp, {colors: true}));
+    console.log(util.inspect(resp, {colors: true}));
 
-    var result = [];
-    result.push({
-      title: resp.battleTag + '(巅峰等级：' + resp.paragonLevel + '，专家巅峰等级：' + resp.paragonLevelHardcore + ')',
-      description: '巅峰等级：' + resp.paragonLevel + '，专家巅峰等级：' + resp.paragonLevelHardcore,
-      picurl: domain + '/images/d3/title.jpg',
-      url: ''
-    });
-
-    resp.heroes.forEach(function(i){
+    if(resp){
+      var result = [];
       result.push({
-        title: i.name + '(职业：' + profession[i.class] + '，' + (i.hardcore ? '专家模式：' : '') + i.level + '级)',
-        description: (i.hardcore ? '专家模式：' : '') + i.level + '级',
-        picurl: domain + '/images/d3/' + i.class + i.gender + '.jpg',
-        url: domain + '/d3/hero?lag=' + resp.battleTag.split('-').join('_') + '&id=' + i.id 
+        title: resp.battleTag + '(巅峰等级：' + resp.paragonLevel + '，专家巅峰等级：' + resp.paragonLevelHardcore + ')',
+        description: '巅峰等级：' + resp.paragonLevel + '，专家巅峰等级：' + resp.paragonLevelHardcore,
+        picurl: domain + '/images/d3/title.jpg',
+        url: ''
       });
-    });
-    
-    res.reply(result);
+
+      resp.heroes.forEach(function(i){
+        result.push({
+          title: i.name + '(职业：' + profession[i.class] + '，' + (i.hardcore ? '专家模式：' : '') + i.level + '级)',
+          description: (i.hardcore ? '专家模式：' : '') + i.level + '级',
+          picurl: domain + '/images/d3/' + i.class + i.gender + '.jpg',
+          url: domain + '/d3/hero?lag=' + resp.battleTag.replace('#', '_') + '&id=' + i.id 
+        });
+      }); 
+
+      res.reply(result);
+    }else{
+      res.reply('您输入的battleTag未找到对应账号信息！\n\n请重新输入正确的battleTag，例如：TEST#888或TEST-888。');
+    }
+
 
   });
 
