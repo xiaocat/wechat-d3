@@ -25,8 +25,7 @@ exports.text = function(message, req, res, next){
       result.push({
         title: resp.battleTag + '(巅峰等级：' + resp.paragonLevel + '，专家巅峰等级：' + resp.paragonLevelHardcore + ')',
         description: '巅峰等级：' + resp.paragonLevel + '，专家巅峰等级：' + resp.paragonLevelHardcore,
-        picurl: domain + '/images/d3/title.jpg',
-        url: ''
+        picurl: domain + '/images/d3/title.jpg'
       });
 
       resp.heroes.forEach(function(i){
@@ -78,5 +77,9 @@ exports.link = function(message, req, res, next){
 };
 
 exports.event = function(message, req, res, next){
-  res.reply('开发中...');
+  if(message.event == 'subscribe'){
+  }else{
+  }
+
+  res.reply('请输入battleTag查询角色信息，例如：TEST#888或TEST-888。')    
 };
