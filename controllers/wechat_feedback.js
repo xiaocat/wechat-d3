@@ -40,6 +40,8 @@ exports.text = function(message, req, res, next){
         });
       }); 
 
+      if(result.length >= 10) result = result.splice(0, 10);
+
       res.reply(result);
     }else{
       res.reply('您输入的battleTag未找到对应账号信息！\n\n请重新输入正确的battleTag，例：Xiao#1116，美服账号输入：Xiao#1116#us。');
