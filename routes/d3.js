@@ -5,7 +5,7 @@ var needle = require('needle');
 
 /* GET users listing. */
 router.get('/hero', function(req, res, next) {
-  console.log(req.query.lag);
+  // console.log(req.query.lag);
   var lag = decodeURIComponent(req.query.lag).replace('_', '-');
   var server_name = req.query.server || 'tw';
   // var lag = 'Xiao-1116';
@@ -13,7 +13,7 @@ router.get('/hero', function(req, res, next) {
 
   if(lag && id){
     get_hero(id, lag, function(id, data){
-      console.log(data);
+      // console.log(data);
       res.render('./hero', {j :data, server_name: server_name});
     });
   }else{
