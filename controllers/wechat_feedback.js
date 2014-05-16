@@ -1,11 +1,14 @@
 var util = require('util');
 var needle = require('needle');
 
-var domain = 'http://d3.xiaoweb.net'
+var domain = 'http://d3.xiaoweb.net';
 
 exports.text = function(message, req, res, next){
   var ctx = message.Content;
-  var lag = ctx.replace('#', '-');
+  var server_name = ctx.split('#').length == 3 ? 'us' : 'tw';
+  var lag = ctx.split('#')[0] + '-' + ctx.split('#')[1];
+
+  // console.log(lag);
 
   // var lag = 'Xiao-1116';
   var profession = {
@@ -18,7 +21,7 @@ exports.text = function(message, req, res, next){
   }
 
   get_tag(lag, function(resp){
-    console.log(util.inspect(resp, {colors: true}));
+    // console.log(util.inspect(resp, {colors: true}));
 
     if(resp){
       var result = [];
@@ -33,20 +36,20 @@ exports.text = function(message, req, res, next){
           title: i.name + '(职业：' + profession[i.class] + '，' + (i.hardcore ? '专家模式：' : '') + i.level + '级)',
           description: (i.hardcore ? '专家模式：' : '') + i.level + '级',
           picurl: domain + '/images/d3/' + i.class + i.gender + '.jpg',
-          url: domain + '/d3/hero?lag=' + encodeURIComponent(resp.battleTag.replace('#', '_')) + '&id=' + i.id 
+          url: domain + '/d3/hero?lag=' + encodeURIComponent(resp.battleTag.replace('#', '_')) + '&id=' + i.id + '&server=' + server_name
         });
       }); 
 
       res.reply(result);
     }else{
-      res.reply('您输入的battleTag未找到对应账号信息！\n\n请重新输入正确的battleTag，例如：TEST#888或TEST-888。');
+      res.reply('您输入的battleTag未找到对应账号信息！\n\n请重新输入正确的battleTag，例：Xiao#1116，美服账号输入：Xiao#1116#us。');
     }
 
 
   });
 
   function get_tag(lag, callback){
-    needle.get('http://tw.battle.net/api/d3/profile/' + lag + '/index', {'json': true}, function(err, resp){
+    needle.get('http://' + server_name + '.battle.net/api/d3/profile/' + lag + '/index', {'json': true}, function(err, resp){
       if(err) throw err;
       if(resp.body && resp.body.code == 'NOTFOUND'){
         callback(null);
@@ -81,5 +84,5 @@ exports.event = function(message, req, res, next){
   }else{
   }
 
-  res.reply('请输入battleTag查询角色信息，例如：TEST#888或TEST-888。')    
+  res.reply('请输入battleTag查询角色信息，例：Xiao#1116，美服账号输入：Xiao#1116#us。')    
 };

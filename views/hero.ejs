@@ -170,7 +170,6 @@
     <div class="panel-body">
       <p><lable>职业：</lable><%= profession[j.class] %><span>(<%= j.gender == 0 ? '男' : '女' %>)</span></p>
       <p><lable>等级：</lable><span><%= j.level %></span></p>
-      <!-- <p><lable>精英击杀：</lable><span><%= j.kills.elites %></span></p> -->
       <div class="personal-bg">
         <% for(var m in j.items){ %>
           <% if(j.items[m].id){ %>
@@ -260,6 +259,7 @@
 </div>
 
 <script type="text/javascript">
+  var server_name = '<%= server_name %>';
   $('.img_hover').popover();
 
   $('.img_hover').on('show.bs.popover', function () {
@@ -282,7 +282,7 @@
 
     //获取装备详细信息
     $.ajax({
-      url:  '/d3/item?data='+ $dom.attr('item-data'),
+      url:  '/d3/item?server_name=' + server_name + '&data='+ $dom.attr('item-data'),
       type: 'GET',
       dataType: 'json',
       success: function(res){
