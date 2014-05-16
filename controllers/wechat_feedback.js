@@ -33,7 +33,7 @@ exports.text = function(message, req, res, next){
           title: i.name + '(职业：' + profession[i.class] + '，' + (i.hardcore ? '专家模式：' : '') + i.level + '级)',
           description: (i.hardcore ? '专家模式：' : '') + i.level + '级',
           picurl: domain + '/images/d3/' + i.class + i.gender + '.jpg',
-          url: domain + '/d3/hero?lag=' + resp.battleTag.replace('#', '_') + '&id=' + i.id 
+          url: domain + '/d3/hero?lag=' + encodeURIComponent(resp.battleTag.replace('#', '_')) + '&id=' + i.id 
         });
       }); 
 
